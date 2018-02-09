@@ -11,6 +11,7 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.text.TextUtils
 import io.github.hachy.android.todo.MyApplication.Companion.database
 import io.github.hachy.android.todo.room.Task
+import io.github.hachy.android.todo.room.TaskDao
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -21,12 +22,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var imm: InputMethodManager
     private lateinit var adapter: TaskRecyclerViewAdapter
+    private lateinit var taskDao: TaskDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        taskDao = database.taskDao()
 
         fab.setOnClickListener { showKeyboard() }
         hideKeyboardBtn.setOnClickListener { hideKeyboard() }
@@ -48,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadAllTasks() =
-            database.taskDao().loadAll()
+            taskDao.loadAll()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
@@ -58,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
     private fun addTask(new: Task) =
-            Observable.fromCallable { database.taskDao().insertTask(new) }
+            Observable.fromCallable { taskDao.insertTask(new) }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
@@ -87,7 +90,7 @@ class MainActivity : AppCompatActivity() {
                 override fun clearView(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?) {
                     super.clearView(recyclerView, viewHolder)
                     // reallyMoved
-                    database.taskDao().loadAll()
+                    taskDao.loadAll()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe()
@@ -101,16 +104,14 @@ class MainActivity : AppCompatActivity() {
         f.created_at = t.created_at
         t.created_at = temp
 
-        Observable.fromCallable {
-            database.taskDao().updateTasks(f, t)
-        }
+        Observable.fromCallable { taskDao.updateTasks(f, t) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe()
     }
 
     private fun deleteTask(task: Task?, pos: Int?) =
-            Observable.fromCallable { task?.let { database.taskDao().deleteTask(it) } }
+            Observable.fromCallable { task?.let { taskDao.deleteTask(it) } }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
