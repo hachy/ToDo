@@ -13,7 +13,7 @@ interface TaskDao {
     fun insertTask(task: Task)
 
     @Update(onConflict = REPLACE)
-    fun updateTask(task: Task)
+    fun updateTasks(vararg tasks: Task)
 
     @Delete
     fun deleteTask(task: Task)

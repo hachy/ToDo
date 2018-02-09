@@ -102,8 +102,7 @@ class MainActivity : AppCompatActivity() {
         t.created_at = temp
 
         Observable.fromCallable {
-            database.taskDao().updateTask(f)
-            database.taskDao().updateTask(t)
+            database.taskDao().updateTasks(f, t)
         }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
