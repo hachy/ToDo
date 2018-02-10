@@ -8,7 +8,14 @@ import io.github.hachy.android.todo.databinding.RowTaskBinding
 import io.github.hachy.android.todo.room.Task
 
 
-class TaskRecyclerViewAdapter(private var tasks: MutableList<Task>) : RecyclerView.Adapter<TaskRecyclerViewAdapter.ViewHolder>() {
+class TaskRecyclerViewAdapter(
+        private var tasks: MutableList<Task>,
+        private val listener: OnRecyclerItemClickListener
+) : RecyclerView.Adapter<TaskRecyclerViewAdapter.ViewHolder>() {
+
+    interface OnRecyclerItemClickListener {
+        fun onCheckBoxClick(position: Int)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
         val view = DataBindingUtil.inflate<RowTaskBinding>(LayoutInflater.from(parent?.context), R.layout.row_task, parent, false)
@@ -18,6 +25,9 @@ class TaskRecyclerViewAdapter(private var tasks: MutableList<Task>) : RecyclerVi
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         holder?.binding?.task = tasks[position]
         holder?.binding?.executePendingBindings()
+        holder?.binding?.checkBox?.setOnClickListener {
+            listener.onCheckBoxClick(holder.adapterPosition)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -41,6 +51,10 @@ class TaskRecyclerViewAdapter(private var tasks: MutableList<Task>) : RecyclerVi
     fun swapItems(from: Int, to: Int) {
         tasks.add(to, tasks.removeAt(from))
         notifyItemMoved(from, to)
+    }
+
+    fun checkItem(task: Task) {
+        task.completed = !task.completed
     }
 
     inner class ViewHolder constructor(val binding: RowTaskBinding) : RecyclerView.ViewHolder(binding.root)

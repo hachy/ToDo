@@ -55,10 +55,20 @@ class MainActivity : AppCompatActivity() {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
-                        adapter = TaskRecyclerViewAdapter(it as MutableList<Task>)
+                        adapter = TaskRecyclerViewAdapter(it as MutableList<Task>, onRecyclerItemClickListener)
                         recyclerView.adapter = adapter
                         adapter.notifyDataSetChanged()
                     }
+
+    private val onRecyclerItemClickListener = object : TaskRecyclerViewAdapter.OnRecyclerItemClickListener {
+        override fun onCheckBoxClick(position: Int) {
+            val task = adapter.getItem(position)
+            Observable.fromCallable { taskDao.updateTasks(Task(task.id, task.content, !task.completed, task.created_at)) }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { adapter.checkItem(task) }
+        }
+    }
 
     private fun addTask(new: Task) =
             Observable.fromCallable { taskDao.insertTask(new) }
@@ -114,9 +124,7 @@ class MainActivity : AppCompatActivity() {
             Observable.fromCallable { task?.let { taskDao.deleteTask(it) } }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
-                        pos?.let { p -> adapter.removeItem(p) }
-                    }
+                    .subscribe { pos?.let { p -> adapter.removeItem(p) } }
 
     private fun showKeyboard() {
         editLayout.visibility = View.VISIBLE
