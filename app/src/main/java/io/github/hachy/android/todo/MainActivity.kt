@@ -9,6 +9,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.text.TextUtils
+import android.view.Menu
+import android.view.MenuItem
 import io.github.hachy.android.todo.MyApplication.Companion.database
 import io.github.hachy.android.todo.room.Task
 import io.github.hachy.android.todo.room.TaskDao
@@ -50,6 +52,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         itemTouchHelper().attachToRecyclerView(recyclerView)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.add_header, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        val id = item?.itemId
+        if (id == R.id.add_header) {
+            val dialog = HeaderDialogFragment()
+            dialog.show(fragmentManager, "dialog")
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun loadAllTasks() =
@@ -143,5 +160,17 @@ class MainActivity : AppCompatActivity() {
         if (currentFocus != null) {
             imm.hideSoftInputFromWindow(currentFocus.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
         }
+    }
+
+    fun doPositiveClick(headerText: String) {
+        val header = Task(content = headerText, viewType = 1, created_at = Date())
+        Observable.fromCallable { taskDao.insertTask(header) }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    adapter.addItem(header)
+                    loadAllTasks()
+                    recyclerView.smoothScrollToPosition(adapter.itemCount)
+                }
     }
 }
