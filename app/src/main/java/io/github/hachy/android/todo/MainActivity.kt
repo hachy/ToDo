@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     private val onRecyclerItemClickListener = object : TaskRecyclerViewAdapter.OnRecyclerItemClickListener {
         override fun onCheckBoxClick(position: Int) {
             val task = adapter.getItem(position)
-            Observable.fromCallable { taskDao.updateTasks(Task(task.id, task.content, !task.completed, task.created_at)) }
+            Observable.fromCallable { taskDao.updateTasks(Task(task.id, task.content, !task.completed, task.viewType, task.created_at)) }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { adapter.checkItem(task) }
