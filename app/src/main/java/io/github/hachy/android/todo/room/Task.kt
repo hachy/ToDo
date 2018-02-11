@@ -10,5 +10,6 @@ data class Task(
         var id: Long = 0,
         var content: String,
         var completed: Boolean = false,
+        var viewType: Int = 0,
         var created_at: Date
 )

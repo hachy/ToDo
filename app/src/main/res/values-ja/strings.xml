@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ToDo</string>
+    <string name="header">見出し</string>
+    <string name="add">追加</string>
+    <string name="cancel">キャンセル</string>
+</resources>

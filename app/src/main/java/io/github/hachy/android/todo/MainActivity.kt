@@ -9,6 +9,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.text.TextUtils
+import android.view.Menu
+import android.view.MenuItem
 import io.github.hachy.android.todo.MyApplication.Companion.database
 import io.github.hachy.android.todo.room.Task
 import io.github.hachy.android.todo.room.TaskDao
@@ -31,6 +33,8 @@ class MainActivity : AppCompatActivity() {
         imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         taskDao = database.taskDao()
 
+        setSupportActionBar(toolbar)
+
         fab.setOnClickListener { showKeyboard() }
         hideKeyboardBtn.setOnClickListener { hideKeyboard() }
 
@@ -50,6 +54,21 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper().attachToRecyclerView(recyclerView)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.add_header, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        val id = item?.itemId
+        if (id == R.id.add_header) {
+            val dialog = HeaderDialogFragment()
+            dialog.show(fragmentManager, "dialog")
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun loadAllTasks() =
             taskDao.loadAll()
                     .subscribeOn(Schedulers.io())
@@ -63,7 +82,7 @@ class MainActivity : AppCompatActivity() {
     private val onRecyclerItemClickListener = object : TaskRecyclerViewAdapter.OnRecyclerItemClickListener {
         override fun onCheckBoxClick(position: Int) {
             val task = adapter.getItem(position)
-            Observable.fromCallable { taskDao.updateTasks(Task(task.id, task.content, !task.completed, task.created_at)) }
+            Observable.fromCallable { taskDao.updateTasks(Task(task.id, task.content, !task.completed, task.viewType, task.created_at)) }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { adapter.checkItem(task) }
@@ -141,5 +160,17 @@ class MainActivity : AppCompatActivity() {
         if (currentFocus != null) {
             imm.hideSoftInputFromWindow(currentFocus.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
         }
+    }
+
+    fun doPositiveClick(headerText: String) {
+        val header = Task(content = headerText, viewType = 1, created_at = Date())
+        Observable.fromCallable { taskDao.insertTask(header) }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    adapter.addItem(header)
+                    loadAllTasks()
+                    recyclerView.smoothScrollToPosition(adapter.itemCount)
+                }
     }
 }
