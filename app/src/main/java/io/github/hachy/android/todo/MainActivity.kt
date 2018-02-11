@@ -31,6 +31,8 @@ class MainActivity : AppCompatActivity() {
         imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         taskDao = database.taskDao()
 
+        setSupportActionBar(toolbar)
+
         fab.setOnClickListener { showKeyboard() }
         hideKeyboardBtn.setOnClickListener { hideKeyboard() }
 
