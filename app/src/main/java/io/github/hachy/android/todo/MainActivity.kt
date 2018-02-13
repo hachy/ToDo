@@ -22,7 +22,6 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var imm: InputMethodManager
     private lateinit var adapter: TaskRecyclerViewAdapter
     private lateinit var taskDao: TaskDao
 
@@ -30,13 +29,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         taskDao = database.taskDao()
 
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { showKeyboard() }
-        hideKeyboardBtn.setOnClickListener { hideKeyboard() }
 
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -65,8 +62,22 @@ class MainActivity : AppCompatActivity() {
         if (id == R.id.add_header) {
             val dialog = HeaderDialogFragment()
             dialog.show(fragmentManager, "dialog")
+            hideEditTask()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        hideEditTask()
+    }
+
+    override fun onBackPressed() {
+        if (editLayout.visibility == View.VISIBLE) {
+            hideEditTask()
+            return
+        }
+        super.onBackPressed()
     }
 
     private fun loadAllTasks() =
@@ -146,6 +157,7 @@ class MainActivity : AppCompatActivity() {
                     .subscribe { pos?.let { p -> adapter.removeItem(p) } }
 
     private fun showKeyboard() {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         editLayout.visibility = View.VISIBLE
         editTask.isFocusableInTouchMode = true
         editTask.isFocusable = true
@@ -154,12 +166,9 @@ class MainActivity : AppCompatActivity() {
         fab.animate().scaleX(0F).scaleY(0F).setDuration(500).start()
     }
 
-    private fun hideKeyboard() {
+    private fun hideEditTask() {
         fab.animate().scaleX(1F).scaleY(1F).setDuration(500).start()
         editLayout.visibility = View.GONE
-        if (currentFocus != null) {
-            imm.hideSoftInputFromWindow(currentFocus.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
-        }
     }
 
     fun doPositiveClick(headerText: String) {
