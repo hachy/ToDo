@@ -2,6 +2,8 @@ package io.github.hachy.android.todo
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import kotlinx.android.synthetic.main.activity_main.*
@@ -125,6 +127,11 @@ class MainActivity : AppCompatActivity() {
                     val pos = viewHolder?.adapterPosition
                     val task = pos?.let { adapter.getItem(pos) }
                     deleteTask(task, pos)
+                    Snackbar.make(coordinator, R.string.delete_task, Snackbar.LENGTH_LONG)
+                            .setActionTextColor(ContextCompat.getColor(applicationContext, R.color.yellow))
+                            .setAction(R.string.undo, {
+                                task?.let { t -> reInsertTask(pos, t) }
+                            }).show()
                 }
 
                 override fun clearView(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?) {
@@ -155,6 +162,14 @@ class MainActivity : AppCompatActivity() {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { pos?.let { p -> adapter.removeItem(p) } }
+
+    private fun reInsertTask(pos: Int, task: Task) =
+            Observable.fromCallable { taskDao.insertTask(task) }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        adapter.reInsertItem(pos, task)
+                    }
 
     private fun showKeyboard() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager

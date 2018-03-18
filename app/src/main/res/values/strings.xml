@@ -4,4 +4,6 @@
     <string name="header">Header</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
+    <string name="delete_task">This task was deleted.</string>
+    <string name="undo">UNDO</string>
 </resources>

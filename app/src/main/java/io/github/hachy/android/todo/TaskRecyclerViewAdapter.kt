@@ -72,6 +72,11 @@ class TaskRecyclerViewAdapter(
         notifyItemMoved(from, to)
     }
 
+    fun reInsertItem(pos: Int, task: Task) {
+        tasks.add(pos, task)
+        notifyItemInserted(pos)
+    }
+
     fun checkItem(task: Task) {
         task.completed = !task.completed
     }

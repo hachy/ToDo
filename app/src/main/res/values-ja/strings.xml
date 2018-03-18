@@ -4,4 +4,6 @@
     <string name="header">見出し</string>
     <string name="add">追加</string>
     <string name="cancel">キャンセル</string>
+    <string name="delete_task">削除しました</string>
+    <string name="undo">元に戻す</string>
 </resources>
