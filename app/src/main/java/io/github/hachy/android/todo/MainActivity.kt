@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
                     val pos = viewHolder?.adapterPosition
                     val task = pos?.let { adapter.getItem(pos) }
-                    deleteTask(task, pos)
+                    deleteTask(pos, task)
                     Snackbar.make(coordinator, R.string.delete_task, Snackbar.LENGTH_LONG)
                             .setActionTextColor(ContextCompat.getColor(applicationContext, R.color.yellow))
                             .setAction(R.string.undo, {
@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity() {
                 .subscribe()
     }
 
-    private fun deleteTask(task: Task?, pos: Int?) =
+    private fun deleteTask(pos: Int?, task: Task?) =
             Observable.fromCallable { task?.let { taskDao.deleteTask(it) } }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
