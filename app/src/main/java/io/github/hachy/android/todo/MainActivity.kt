@@ -1,5 +1,7 @@
 package io.github.hachy.android.todo
 
+import android.content.Context
+import android.graphics.Canvas
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -20,6 +22,8 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.*
+import android.graphics.Bitmap
+import android.graphics.Paint
 
 
 class MainActivity : AppCompatActivity() {
@@ -142,6 +146,34 @@ class MainActivity : AppCompatActivity() {
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe()
                 }
+
+                override fun onChildDraw(c: Canvas, recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+                    if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                        val itemView = viewHolder.itemView
+                        val paint = Paint()
+                        val bitmap: Bitmap
+                        if (dX < 0) { // swipe left
+                            paint.color = ContextCompat.getColor(applicationContext, R.color.colorAccent)
+                            bitmap = bitmapFromVectorDrawable(applicationContext, R.drawable.ic_delete_24dp)
+                            val height = itemView.height.div(2).minus(bitmap.height / 2)
+                            val bitmapWidth = bitmap.width
+                            c.drawRect(
+                                    itemView?.right?.plus(dX) as Float,
+                                    itemView.top.toFloat(),
+                                    itemView.right.toFloat(),
+                                    itemView.bottom.toFloat(),
+                                    paint
+                            )
+                            c.drawBitmap(
+                                    bitmap,
+                                    itemView.right.minus(bitmapWidth).minus(24f),
+                                    itemView.top.plus(height).toFloat(),
+                                    null
+                            )
+                        }
+                    }
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                }
             })
 
     private fun swapTasks(from: Int, pos: Int) {
@@ -170,6 +202,16 @@ class MainActivity : AppCompatActivity() {
                     .subscribe {
                         adapter.reInsertItem(pos, task)
                     }
+
+    private fun bitmapFromVectorDrawable(context: Context, drawableId: Int): Bitmap {
+        val drawable = ContextCompat.getDrawable(context, drawableId)
+        val canvas = Canvas()
+        val bitmap = Bitmap.createBitmap(drawable!!.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        canvas.setBitmap(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
+    }
 
     private fun showKeyboard() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
