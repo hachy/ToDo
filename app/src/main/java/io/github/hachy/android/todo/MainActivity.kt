@@ -158,7 +158,7 @@ class MainActivity : AppCompatActivity() {
                             val height = itemView.height.div(2).minus(bitmap.height / 2)
                             val bitmapWidth = bitmap.width
                             c.drawRect(
-                                    itemView?.right?.plus(dX) as Float,
+                                    itemView.right.plus(dX),
                                     itemView.top.toFloat(),
                                     itemView.right.toFloat(),
                                     itemView.bottom.toFloat(),
