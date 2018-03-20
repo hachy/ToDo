@@ -18,19 +18,19 @@ class TaskRecyclerViewAdapter(
         fun onCheckBoxClick(position: Int)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == 0) {
-            val view = DataBindingUtil.inflate<RowTaskBinding>(LayoutInflater.from(parent?.context), R.layout.row_task, parent, false)
+            val view = DataBindingUtil.inflate<RowTaskBinding>(LayoutInflater.from(parent.context), R.layout.row_task, parent, false)
             ContentViewHolder(view)
         } else {
-            val view = DataBindingUtil.inflate<HeaderTaskBinding>(LayoutInflater.from(parent?.context), R.layout.header_task, parent, false)
+            val view = DataBindingUtil.inflate<HeaderTaskBinding>(LayoutInflater.from(parent.context), R.layout.header_task, parent, false)
             HeaderViewHolder(view)
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val task = tasks[position]
-        if (holder?.itemViewType == 0) {
+        if (holder.itemViewType == 0) {
             val cvh = holder as ContentViewHolder
             cvh.binding.task = task
             cvh.binding.executePendingBindings()
