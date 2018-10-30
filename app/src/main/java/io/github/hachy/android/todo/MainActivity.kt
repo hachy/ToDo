@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         val id = item?.itemId
         if (id == R.id.add_header) {
             val dialog = HeaderDialogFragment()
-            dialog.show(fragmentManager, "dialog")
+            dialog.show(supportFragmentManager, "dialog")
             hideEditTask()
         }
         return super.onOptionsItemSelected(item)
@@ -99,12 +99,15 @@ class MainActivity : AppCompatActivity() {
     private val onRecyclerItemClickListener = object : TaskRecyclerViewAdapter.OnRecyclerItemClickListener {
         override fun onCheckBoxClick(position: Int) {
             val task = adapter.getItem(position)
+            toggleCheckBox(task)
+        }
+    }
+
+    private fun toggleCheckBox(task: Task) =
             Observable.fromCallable { taskDao.updateTasks(Task(task.id, task.content, !task.completed, task.viewType, task.created_at)) }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { adapter.checkItem(task) }
-        }
-    }
 
     private fun addTask(new: Task) =
             Observable.fromCallable { taskDao.insertTask(new) }
@@ -114,31 +117,29 @@ class MainActivity : AppCompatActivity() {
                         adapter.addItem(new)
                         loadAllTasks()
                         recyclerView.smoothScrollToPosition(adapter.itemCount)
-                        editTask.text.clear()
+                        editTask.text?.clear()
                     }
 
     private fun itemTouchHelper() =
             ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
-                override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-                    val fromPos = viewHolder.adapterPosition
-                    val toPos = target.adapterPosition
+                override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
+                    val fromPos = p1.adapterPosition
+                    val toPos = p2.adapterPosition
                     adapter.swapItems(fromPos, toPos)
                     swapTasks(fromPos, toPos)
                     return true
                 }
 
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
-                    val pos = viewHolder?.adapterPosition
-                    val task = pos?.let { adapter.getItem(pos) }
+                override fun onSwiped(p0: RecyclerView.ViewHolder, p1: Int) {
+                    val pos = p0.adapterPosition
+                    val task = adapter.getItem(pos)
                     deleteTask(pos, task)
                     Snackbar.make(coordinator, R.string.delete_task, Snackbar.LENGTH_LONG)
                             .setActionTextColor(ContextCompat.getColor(applicationContext, R.color.yellow))
-                            .setAction(R.string.undo, {
-                                task?.let { t -> reInsertTask(pos, t) }
-                            }).show()
+                            .setAction(R.string.undo) { reInsertTask(pos, task) }.show()
                 }
 
-                override fun clearView(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?) {
+                override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
                     super.clearView(recyclerView, viewHolder)
                     // reallyMoved
                     taskDao.loadAll()
@@ -147,7 +148,7 @@ class MainActivity : AppCompatActivity() {
                             .subscribe()
                 }
 
-                override fun onChildDraw(c: Canvas, recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+                override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
                     if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                         val itemView = viewHolder.itemView
                         val paint = Paint()
@@ -230,13 +231,16 @@ class MainActivity : AppCompatActivity() {
 
     fun doPositiveClick(headerText: String) {
         val header = Task(content = headerText, viewType = 1, created_at = Date())
-        Observable.fromCallable { taskDao.insertTask(header) }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    adapter.addItem(header)
-                    loadAllTasks()
-                    recyclerView.smoothScrollToPosition(adapter.itemCount)
-                }
+        addHeader(header)
     }
+
+    private fun addHeader(header: Task) =
+            Observable.fromCallable { taskDao.insertTask(header) }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        adapter.addItem(header)
+                        loadAllTasks()
+                        recyclerView.smoothScrollToPosition(adapter.itemCount)
+                    }
 }
