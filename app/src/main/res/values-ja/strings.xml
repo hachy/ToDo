@@ -6,4 +6,5 @@
     <string name="cancel">キャンセル</string>
     <string name="delete_task">削除しました</string>
     <string name="undo">元に戻す</string>
+    <string name="header_empty">何か追加しよう</string>
 </resources>

@@ -7,4 +7,5 @@
     <string name="cancel">Cancel</string>
     <string name="delete_task">This task was deleted.</string>
     <string name="undo">UNDO</string>
+    <string name="header_empty">Please add …</string>
 </resources>
