@@ -33,7 +33,7 @@ class HeaderDialogFragment : DialogFragment() {
         d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             val header = "${editText?.text}"
             if (TextUtils.isEmpty(header)) {
-                errMsg?.error = getString(R.string.header_empty)
+                errMsg?.error = getString(R.string.task_empty)
             } else {
                 (activity as MainActivity).doPositiveClick(header)
                 editText?.text?.clear()

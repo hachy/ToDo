@@ -48,7 +48,9 @@ class MainActivity : AppCompatActivity() {
 
         addTaskBtn.setOnClickListener {
             val content = "${editTask.text}"
-            if (!TextUtils.isEmpty(content)) {
+            if (TextUtils.isEmpty(content)) {
+                editTask.error = getString(R.string.task_empty)
+            } else {
                 val new = Task(content = content, created_at = Date())
                 addTask(new)
             }
