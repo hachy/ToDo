@@ -12,6 +12,7 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         database = Room.databaseBuilder(this, TaskDatabase::class.java, "ToDoDb").build()
+        Prefs.init(this)
     }
 }
 
