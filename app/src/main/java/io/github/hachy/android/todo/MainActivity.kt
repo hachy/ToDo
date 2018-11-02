@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        loadAllTasks()
+        loadTasksAsc()
 
         addTaskBtn.setOnClickListener {
             val content = "${editTask.text}"
@@ -88,8 +88,8 @@ class MainActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 
-    private fun loadAllTasks() =
-            taskDao.loadAll()
+    private fun loadTasksAsc() =
+            taskDao.loadAsc()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         adapter.addItem(new)
-                        loadAllTasks()
+                        loadTasksAsc()
                         recyclerView.smoothScrollToPosition(adapter.itemCount)
                         editTask.text?.clear()
                     }
@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
                 override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
                     super.clearView(recyclerView, viewHolder)
                     // reallyMoved
-                    taskDao.loadAll()
+                    taskDao.loadAsc()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe()
@@ -242,7 +242,7 @@ class MainActivity : AppCompatActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         adapter.addItem(header)
-                        loadAllTasks()
+                        loadTasksAsc()
                         recyclerView.smoothScrollToPosition(adapter.itemCount)
                     }
 }

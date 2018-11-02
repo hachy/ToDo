@@ -7,8 +7,7 @@ import io.reactivex.Maybe
 @Dao
 interface TaskDao {
     @Query("SELECT * FROM task ORDER BY created_at")
-    fun loadAll(): Maybe<List<Task>>
-
+    fun loadAsc(): Maybe<List<Task>>
     @Insert(onConflict = REPLACE)
     fun insertTask(task: Task)
 
