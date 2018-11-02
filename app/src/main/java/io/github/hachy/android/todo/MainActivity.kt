@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        loadTasksAsc()
+        if (Prefs.isAsc) loadTasksAsc() else loadTasksDesc()
 
         addTaskBtn.setOnClickListener {
             val content = "${editTask.text}"
@@ -98,6 +98,16 @@ class MainActivity : AppCompatActivity() {
                         adapter.notifyDataSetChanged()
                     }
 
+    private fun loadTasksDesc() =
+            taskDao.loadDesc()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        adapter = TaskRecyclerViewAdapter(it as MutableList<Task>, onRecyclerItemClickListener)
+                        recyclerView.adapter = adapter
+                        adapter.notifyDataSetChanged()
+                    }
+
     private val onRecyclerItemClickListener = object : TaskRecyclerViewAdapter.OnRecyclerItemClickListener {
         override fun onCheckBoxClick(position: Int) {
             val task = adapter.getItem(position)
@@ -117,9 +127,13 @@ class MainActivity : AppCompatActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         adapter.addItem(new)
-                        loadTasksAsc()
-                        recyclerView.smoothScrollToPosition(adapter.itemCount)
                         editTask.text?.clear()
+                        if (Prefs.isAsc) {
+                            loadTasksAsc()
+                            recyclerView.smoothScrollToPosition(adapter.itemCount)
+                        } else {
+                            loadTasksDesc()
+                        }
                     }
 
     private fun itemTouchHelper() =
@@ -242,7 +256,11 @@ class MainActivity : AppCompatActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         adapter.addItem(header)
-                        loadTasksAsc()
-                        recyclerView.smoothScrollToPosition(adapter.itemCount)
+                        if (Prefs.isAsc) {
+                            loadTasksAsc()
+                            recyclerView.smoothScrollToPosition(adapter.itemCount)
+                        } else {
+                            loadTasksDesc()
+                        }
                     }
 }
