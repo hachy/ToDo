@@ -8,4 +8,10 @@
         android:title="@string/add_header"
         app:showAsAction="ifRoom"
         tools:targetApi="o" />
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_settings_24dp"
+        android:title="@string/settings"
+        app:showAsAction="ifRoom"
+        tools:targetApi="o" />
 </menu>

@@ -8,4 +8,5 @@
     <string name="delete_task">This task was deleted.</string>
     <string name="undo">UNDO</string>
     <string name="task_empty">Please add …</string>
+    <string name="settings">Settings</string>
 </resources>

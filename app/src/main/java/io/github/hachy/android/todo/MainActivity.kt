@@ -66,11 +66,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val id = item?.itemId
-        if (id == R.id.add_header) {
-            val dialog = HeaderDialogFragment()
-            dialog.show(supportFragmentManager, "dialog")
-            hideEditTask()
+        when (item?.itemId) {
+            R.id.add_header -> {
+                val dialog = HeaderDialogFragment()
+                dialog.show(supportFragmentManager, "dialog")
+                hideEditTask()
+            }
+            R.id.settings -> {
+            }
         }
         return super.onOptionsItemSelected(item)
     }
