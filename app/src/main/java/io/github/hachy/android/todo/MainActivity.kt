@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var adapter: TaskRecyclerViewAdapter
     private lateinit var taskDao: TaskDao
+    private lateinit var ascending: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +45,8 @@ class MainActivity : AppCompatActivity() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        if (Prefs.isAsc) loadTasksAsc() else loadTasksDesc()
+        ascending = getString(R.string.order_value_ascending)
+        if (Prefs.order == ascending) loadTasksAsc() else loadTasksDesc()
 
         addTaskBtn.setOnClickListener {
             val content = "${editTask.text}"
@@ -131,7 +133,7 @@ class MainActivity : AppCompatActivity() {
                     .subscribe {
                         adapter.addItem(new)
                         editTask.text?.clear()
-                        if (Prefs.isAsc) {
+                        if (Prefs.order == ascending) {
                             loadTasksAsc()
                             recyclerView.smoothScrollToPosition(adapter.itemCount)
                         } else {
@@ -259,7 +261,7 @@ class MainActivity : AppCompatActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         adapter.addItem(header)
-                        if (Prefs.isAsc) {
+                        if (Prefs.order == ascending) {
                             loadTasksAsc()
                             recyclerView.smoothScrollToPosition(adapter.itemCount)
                         } else {

@@ -4,12 +4,14 @@ import android.content.Context
 import android.content.SharedPreferences
 
 object Prefs {
-    private const val NAME = "io.github.hachy.android.todo"
     private lateinit var preferences: SharedPreferences
-    private val IS_ASCENDING_PREF = Pair("is_ascending", true)
+    private val name = MyApplication.getContext().getString(R.string.prefs_name)
+    private val key = MyApplication.getContext().getString(R.string.order_pref_key)
+    private val value = MyApplication.getContext().getString(R.string.order_value_ascending)
+    private val ORDER_PREF = Pair(key, value)
 
     fun init(context: Context) {
-        preferences = context.getSharedPreferences(NAME, Context.MODE_PRIVATE)
+        preferences = context.getSharedPreferences(name, Context.MODE_PRIVATE)
     }
 
     private inline fun SharedPreferences.edit(operation: (SharedPreferences.Editor) -> Unit) {
@@ -18,9 +20,9 @@ object Prefs {
         editor.apply()
     }
 
-    var isAsc: Boolean
-        get() = preferences.getBoolean(IS_ASCENDING_PREF.first, IS_ASCENDING_PREF.second)
+    var order: String?
+        get() = preferences.getString(ORDER_PREF.first, ORDER_PREF.second)
         set(value) = preferences.edit {
-            it.putBoolean(IS_ASCENDING_PREF.first, value)
+            it.putString(ORDER_PREF.first, value)
         }
 }
