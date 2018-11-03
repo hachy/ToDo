@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity() {
                 hideEditTask()
             }
             R.id.settings -> {
+                startActivity(SettingsActivity.createIntent(this))
             }
         }
         return super.onOptionsItemSelected(item)
