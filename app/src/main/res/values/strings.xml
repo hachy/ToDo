@@ -14,4 +14,9 @@
     <string name="order_pref_key" translatable="false">todo_order</string>
     <string name="order_value_ascending" translatable="false">ASCENDING</string>
     <string name="order_value_descending" translatable="false">DESCENDING</string>
+    <string name="order_pref_title">Order</string>
+    <string name="order_pref_dialog_title">Order</string>
+
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
 </resources>
