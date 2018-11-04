@@ -61,6 +61,11 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper().attachToRecyclerView(recyclerView)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (Prefs.order == ascending) loadTasksAsc() else loadTasksDesc()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.nav_menu, menu)
