@@ -8,4 +8,15 @@
     <string name="delete_task">This task was deleted.</string>
     <string name="undo">UNDO</string>
     <string name="task_empty">Please add …</string>
+    <string name="settings">Settings</string>
+
+    <string name="prefs_name" translatable="false">io.github.hachy.android.todo.prefs</string>
+    <string name="order_pref_key" translatable="false">todo_order</string>
+    <string name="order_value_ascending" translatable="false">ASCENDING</string>
+    <string name="order_value_descending" translatable="false">DESCENDING</string>
+    <string name="order_pref_title">Order</string>
+    <string name="order_pref_dialog_title">Order</string>
+
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
 </resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="orderEntries">
+        <item name="asc">@string/ascending</item>
+        <item name="desc">@string/descending</item>
+    </string-array>
+    <string-array name="orderValues">
+        <item name="asc">@string/order_value_ascending</item>
+        <item name="desc">@string/order_value_descending</item>
+    </string-array>
+</resources>

@@ -7,4 +7,9 @@
     <string name="delete_task">削除しました</string>
     <string name="undo">元に戻す</string>
     <string name="task_empty">何か追加しよう</string>
+    <string name="settings">設定</string>
+    <string name="order_pref_title">並び順</string>
+    <string name="order_pref_dialog_title">並び順</string>
+    <string name="ascending">昇順</string>
+    <string name="descending">降順</string>
 </resources>

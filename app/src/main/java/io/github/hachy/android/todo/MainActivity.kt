@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var adapter: TaskRecyclerViewAdapter
     private lateinit var taskDao: TaskDao
+    private lateinit var ascending: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +45,8 @@ class MainActivity : AppCompatActivity() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        loadAllTasks()
+        ascending = getString(R.string.order_value_ascending)
+        if (Prefs.order == ascending) loadTasksAsc() else loadTasksDesc()
 
         addTaskBtn.setOnClickListener {
             val content = "${editTask.text}"
@@ -59,18 +61,27 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper().attachToRecyclerView(recyclerView)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (Prefs.order == ascending) loadTasksAsc() else loadTasksDesc()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
-        menuInflater.inflate(R.menu.add_header, menu)
+        menuInflater.inflate(R.menu.nav_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val id = item?.itemId
-        if (id == R.id.add_header) {
-            val dialog = HeaderDialogFragment()
-            dialog.show(supportFragmentManager, "dialog")
-            hideEditTask()
+        when (item?.itemId) {
+            R.id.add_header -> {
+                val dialog = HeaderDialogFragment()
+                dialog.show(supportFragmentManager, "dialog")
+                hideEditTask()
+            }
+            R.id.settings -> {
+                startActivity(SettingsActivity.createIntent(this))
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -88,8 +99,18 @@ class MainActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 
-    private fun loadAllTasks() =
-            taskDao.loadAll()
+    private fun loadTasksAsc() =
+            taskDao.loadAsc()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        adapter = TaskRecyclerViewAdapter(it as MutableList<Task>, onRecyclerItemClickListener)
+                        recyclerView.adapter = adapter
+                        adapter.notifyDataSetChanged()
+                    }
+
+    private fun loadTasksDesc() =
+            taskDao.loadDesc()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
@@ -117,9 +138,13 @@ class MainActivity : AppCompatActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         adapter.addItem(new)
-                        loadAllTasks()
-                        recyclerView.smoothScrollToPosition(adapter.itemCount)
                         editTask.text?.clear()
+                        if (Prefs.order == ascending) {
+                            loadTasksAsc()
+                            recyclerView.smoothScrollToPosition(adapter.itemCount)
+                        } else {
+                            loadTasksDesc()
+                        }
                     }
 
     private fun itemTouchHelper() =
@@ -144,7 +169,7 @@ class MainActivity : AppCompatActivity() {
                 override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
                     super.clearView(recyclerView, viewHolder)
                     // reallyMoved
-                    taskDao.loadAll()
+                    taskDao.loadAsc()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe()
@@ -242,7 +267,11 @@ class MainActivity : AppCompatActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         adapter.addItem(header)
-                        loadAllTasks()
-                        recyclerView.smoothScrollToPosition(adapter.itemCount)
+                        if (Prefs.order == ascending) {
+                            loadTasksAsc()
+                            recyclerView.smoothScrollToPosition(adapter.itemCount)
+                        } else {
+                            loadTasksDesc()
+                        }
                     }
 }
