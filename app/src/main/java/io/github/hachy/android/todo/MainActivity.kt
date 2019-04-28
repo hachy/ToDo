@@ -2,16 +2,16 @@ package io.github.hachy.android.todo
 
 import android.content.Context
 import android.graphics.Canvas
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.content.ContextCompat
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import kotlinx.android.synthetic.main.activity_main.*
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem

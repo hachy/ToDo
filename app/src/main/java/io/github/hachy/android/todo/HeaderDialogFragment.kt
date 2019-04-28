@@ -3,8 +3,8 @@ package io.github.hachy.android.todo
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
-import android.support.v4.app.DialogFragment
+import com.google.android.material.textfield.TextInputLayout
+import androidx.fragment.app.DialogFragment
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher

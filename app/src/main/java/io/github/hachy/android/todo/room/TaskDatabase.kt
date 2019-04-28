@@ -1,8 +1,8 @@
 package io.github.hachy.android.todo.room
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import io.github.hachy.android.todo.Converters
 
 @Database(entities = [(Task::class)], version = 1)

@@ -1,7 +1,7 @@
 package io.github.hachy.android.todo.room
 
-import android.arch.persistence.room.*
-import android.arch.persistence.room.OnConflictStrategy.REPLACE
+import androidx.room.*
+import androidx.room.OnConflictStrategy.REPLACE
 import io.reactivex.Maybe
 
 @Dao

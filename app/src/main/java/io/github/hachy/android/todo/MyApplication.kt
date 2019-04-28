@@ -1,7 +1,7 @@
 package io.github.hachy.android.todo
 
 import android.app.Application
-import android.arch.persistence.room.Room
+import androidx.room.Room
 import android.content.Context
 import io.github.hachy.android.todo.room.TaskDatabase
 

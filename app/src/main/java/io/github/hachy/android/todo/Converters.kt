@@ -1,6 +1,6 @@
 package io.github.hachy.android.todo
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 import java.util.*
 
 class Converters {

@@ -1,12 +1,12 @@
 package io.github.hachy.android.todo
 
-import android.databinding.DataBindingUtil
-import android.support.v7.widget.RecyclerView
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import io.github.hachy.android.todo.databinding.HeaderTaskBinding
-import io.github.hachy.android.todo.databinding.RowTaskBinding
+import androidx.databinding.ViewDataBinding
 import io.github.hachy.android.todo.room.Task
+import kotlinx.android.synthetic.main.row_task.view.*
 
 
 class TaskRecyclerViewAdapter(
@@ -20,10 +20,10 @@ class TaskRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == 0) {
-            val view = DataBindingUtil.inflate<RowTaskBinding>(LayoutInflater.from(parent.context), R.layout.row_task, parent, false)
+            val view = DataBindingUtil.inflate<ViewDataBinding>(LayoutInflater.from(parent.context), R.layout.row_task, parent, false)
             ContentViewHolder(view)
         } else {
-            val view = DataBindingUtil.inflate<HeaderTaskBinding>(LayoutInflater.from(parent.context), R.layout.header_task, parent, false)
+            val view = DataBindingUtil.inflate<ViewDataBinding>(LayoutInflater.from(parent.context), R.layout.header_task, parent, false)
             HeaderViewHolder(view)
         }
     }
@@ -32,14 +32,14 @@ class TaskRecyclerViewAdapter(
         val task = tasks[position]
         if (holder.itemViewType == 0) {
             val cvh = holder as ContentViewHolder
-            cvh.binding.task = task
+            cvh.binding.setVariable(BR.task, task)
             cvh.binding.executePendingBindings()
-            cvh.binding.checkBox.setOnClickListener {
+            cvh.binding.root.checkBox.setOnClickListener {
                 listener.onCheckBoxClick(holder.adapterPosition)
             }
         } else {
             val hvh = holder as HeaderViewHolder
-            hvh.binding.task = task
+            hvh.binding.setVariable(BR.task, task)
             hvh.binding.executePendingBindings()
         }
     }
@@ -81,7 +81,7 @@ class TaskRecyclerViewAdapter(
         task.completed = !task.completed
     }
 
-    inner class ContentViewHolder constructor(val binding: RowTaskBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ContentViewHolder constructor(val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root)
 
-    inner class HeaderViewHolder constructor(val binding: HeaderTaskBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class HeaderViewHolder constructor(val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root)
 }
